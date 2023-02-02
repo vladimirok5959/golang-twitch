@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+	"time"
 )
 
 // Default Twitch server API credentials.
@@ -22,6 +23,15 @@ const TwitchApiMaxTopics = 50
 type PubSub struct {
 	URL         url.URL
 	Connections map[int64]*Connection
+
+	// Events
+	eventOnConnect    func(*Connection)
+	eventOnDisconnect func(*Connection)
+	eventOnError      func(*Connection, error)
+	eventOnInfo       func(*Connection, string)
+	eventOnMessage    func(*Connection, *Answer)
+	eventOnPing       func(*Connection, time.Time)
+	eventOnPong       func(*Connection, time.Time, time.Time)
 }
 
 // New create and returns new API client.
@@ -39,6 +49,8 @@ func NewWithURL(url url.URL) *PubSub {
 	p := PubSub{URL: url}
 	return &p
 }
+
+// -----------------------------------------------------------------------------
 
 // Listen is adding topics for listening. It take care of API limits.
 // New TCP connection will be created for every 50 topics.
@@ -71,4 +83,34 @@ func (p *PubSub) Topic(topic string, params ...interface{}) string {
 	}
 
 	return fmt.Sprintf("%s.%s", topic, strings.Join(list, "."))
+}
+
+// -----------------------------------------------------------------------------
+
+func (c *PubSub) OnConnect(fn func(*Connection)) {
+	c.eventOnConnect = fn
+}
+
+func (c *PubSub) OnDisconnect(fn func(*Connection)) {
+	c.eventOnDisconnect = fn
+}
+
+func (c *PubSub) OnError(fn func(*Connection, error)) {
+	c.eventOnError = fn
+}
+
+func (c *PubSub) OnInfo(fn func(*Connection, string)) {
+	c.eventOnInfo = fn
+}
+
+func (c *PubSub) OnMessage(fn func(*Connection, *Answer)) {
+	c.eventOnMessage = fn
+}
+
+func (c *PubSub) OnPing(fn func(*Connection, time.Time)) {
+	c.eventOnPing = fn
+}
+
+func (c *PubSub) OnPong(fn func(*Connection, time.Time, time.Time)) {
+	c.eventOnPong = fn
 }
