@@ -131,7 +131,7 @@ func (c *Connection) listenTopis() {
 	}
 
 	// Send LISTEN request
-	if c.Connection != nil {
+	if c.Connection != nil && c.active {
 		msg := Answer{Type: Listen, Data: AnswerDataTopics{Topics: topics}}.JSON()
 		if err := c.Connection.WriteMessage(websocket.TextMessage, msg); err != nil {
 			c.onError(err)
@@ -171,7 +171,7 @@ func (c *Connection) RemoveTopic(topic string) {
 	delete(c.topics, topic)
 
 	// Send UNLISTEN request
-	if c.Connection != nil {
+	if c.Connection != nil && c.active {
 		msg := Answer{Type: Unlisten, Data: AnswerDataTopics{Topics: []string{topic}}}.JSON()
 		if err := c.Connection.WriteMessage(websocket.TextMessage, msg); err != nil {
 			c.onError(err)
