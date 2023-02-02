@@ -121,6 +121,7 @@ func (c *Connection) listenTopis() {
 		topics = append(topics, topic)
 	}
 
+	// No topics, close connection
 	if len(topics) <= 0 {
 		c.active = false
 		if c.Connection != nil {
@@ -167,7 +168,21 @@ func (c *Connection) RemoveTopic(topic string) {
 	defer c.Unlock()
 	delete(c.topics, topic)
 
-	c.listenTopis()
+	// Send UNLISTEN request
+	msg := Answer{Type: Unlisten, Data: AnswerDataTopics{Topics: []string{topic}}}.JSON()
+	if err := c.Connection.WriteMessage(websocket.TextMessage, msg); err != nil {
+		c.onError(err)
+		c.active = false
+		c.onDisconnect()
+	}
+
+	// No topics, close connection
+	if len(c.topics) <= 0 {
+		c.active = false
+		if c.Connection != nil {
+			c.Connection.Close()
+		}
+	}
 }
 
 // RemoveAllTopics is remove all topics from listening.
