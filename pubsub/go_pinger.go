@@ -17,7 +17,7 @@ func go_pinger(c *Connection) {
 					if time.Since(c.ping_start) > TwitchApiPingEach {
 						if err := c.Connection.WriteMessage(
 							websocket.TextMessage,
-							[]byte(`{"type":"PING"}`),
+							Response{Type: "PING"}.JSON(),
 						); err != nil {
 							c.onError(err)
 							c.active = false

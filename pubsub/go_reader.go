@@ -26,9 +26,7 @@ func go_reader(c *Connection) {
 							return
 						}
 					} else {
-						var resp struct {
-							Type string `json:"type"`
-						}
+						var resp Response
 						if err := json.Unmarshal(msg, &resp); err != nil {
 							c.onError(err)
 						} else {
