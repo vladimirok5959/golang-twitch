@@ -1,5 +1,5 @@
 // Package implements Twitch API PubSub and automatically take care of API
-// limit. Also it will handle automatically reconnections, ping/pong and
+// limits. Also it will handle automatically reconnections, ping/pong and
 // maintenance requests.
 package pubsub
 
