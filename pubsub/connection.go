@@ -117,7 +117,7 @@ func (c *Connection) listenTopis() {
 	for topic := range c.topics {
 		topics = append(topics, topic)
 	}
-	msg := Response{Type: "LISTEN", Data: DataTopics{Topics: topics}}.JSON()
+	msg := Answer{Type: Listen, Data: AnswerDataTopics{Topics: topics}}.JSON()
 	if err := c.Connection.WriteMessage(websocket.TextMessage, msg); err != nil {
 		c.onError(err)
 		c.active = false

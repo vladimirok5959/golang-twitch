@@ -2,6 +2,7 @@ package pubsub
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -26,17 +27,17 @@ func go_reader(c *Connection) {
 							return
 						}
 					} else {
-						var resp Response
-						if err := json.Unmarshal(msg, &resp); err != nil {
+						var answer Answer
+						if err := json.Unmarshal(msg, &answer); err != nil {
 							c.onError(err)
 						} else {
-							if resp.Type == "PONG" {
+							if answer.Type == Pong {
 								ct := time.Now()
 								c.onPong(c.ping_start, ct)
 								c.ping_start = ct
 								c.ping_sended = false
-							} else if resp.Type == "RECONNECT" {
-								c.onInfo("warning, got RECONNECT response")
+							} else if answer.Type == Reconnect {
+								c.onInfo(fmt.Sprintf("warning, got %s response", Reconnect))
 								c.active = false
 								c.onDisconnect()
 								c.ping_start = time.Now()
@@ -44,7 +45,7 @@ func go_reader(c *Connection) {
 								if err := c.Connection.Close(); err != nil {
 									c.onError(err)
 								}
-							} else if resp.Type == "RESPONSE" {
+							} else if answer.Type == Response {
 								// TODO: {"type":"RESPONSE","error":"","nonce":""}
 							} else {
 								c.onMessage(msg)

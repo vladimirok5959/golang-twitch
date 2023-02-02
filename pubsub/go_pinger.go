@@ -17,7 +17,7 @@ func go_pinger(c *Connection) {
 					if time.Since(c.ping_start) > TwitchApiPingEach {
 						if err := c.Connection.WriteMessage(
 							websocket.TextMessage,
-							Response{Type: "PING"}.JSON(),
+							Answer{Type: Ping}.JSON(),
 						); err != nil {
 							c.onError(err)
 							c.active = false
@@ -42,7 +42,7 @@ func go_pinger(c *Connection) {
 			case <-time.After(1 * time.Second):
 				if c.active && c.ping_sended {
 					if time.Since(c.ping_start) > TwitchApiPingTimeout {
-						c.onInfo(fmt.Sprintf("warning, no PONG response more than %d seconds", TwitchApiPingTimeout))
+						c.onInfo(fmt.Sprintf("warning, no %s response more than %d seconds", Pong, TwitchApiPingTimeout))
 						c.active = false
 						c.onDisconnect()
 						c.ping_start = time.Now()
