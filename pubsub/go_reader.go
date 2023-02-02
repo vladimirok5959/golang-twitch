@@ -38,7 +38,14 @@ func go_reader(c *Connection) {
 								c.ping_start = ct
 								c.ping_sended = false
 							} else if resp.Type == "RECONNECT" {
-								// TODO: ...
+								c.onInfo("warning, got RECONNECT response")
+								c.active = false
+								c.onDisconnect()
+								c.ping_start = time.Now()
+								c.ping_sended = false
+								if err := c.Connection.Close(); err != nil {
+									c.onError(err)
+								}
 							} else {
 								c.onMessage(msg)
 							}
