@@ -141,7 +141,7 @@ func (c *Connection) AddTopic(topic string) {
 	defer c.Unlock()
 	c.topics[topic] = nil
 
-	// TODO: Send cmd...
+	c.listenTopis()
 }
 
 // RemoveTopic is remove topics from listening.
@@ -154,7 +154,7 @@ func (c *Connection) RemoveTopic(topic string) {
 	defer c.Unlock()
 	delete(c.topics, topic)
 
-	// TODO: Send cmd...
+	c.listenTopis()
 }
 
 // Topics returns all current listen topics.
