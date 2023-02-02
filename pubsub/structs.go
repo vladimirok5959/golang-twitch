@@ -2,6 +2,7 @@ package pubsub
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 type AnswerType string
@@ -20,11 +21,38 @@ func (a AnswerType) String() string {
 	return string(a)
 }
 
+// -----------------------------------------------------------------------------
+
 type Answer struct {
-	Type  AnswerType  `json:"type"`
-	Data  interface{} `json:"data,omitempty"`
-	Error string      `json:"error,omitempty"`
-	Nonce string      `json:"nonce,omitempty"`
+	processed bool
+
+	Type  AnswerType `json:"type"`
+	Data  any        `json:"data,omitempty"`
+	Error string     `json:"error,omitempty"`
+	Nonce string     `json:"nonce,omitempty"`
+}
+
+func (a *Answer) Parse() {
+	if a.processed {
+		return
+	}
+	a.processed = true
+
+	data := AnswerDataMessage{}
+
+	switch v := a.Data.(type) {
+	case map[string]any:
+		for fn, fv := range v {
+			if fn == "message" {
+				data.Message = fmt.Sprintf("%s", fv)
+			} else if fn == "topic" {
+				data.Topic = fmt.Sprintf("%s", fv)
+			}
+		}
+	default:
+	}
+
+	a.Data = data
 }
 
 func (a Answer) HasError() bool {
@@ -35,6 +63,20 @@ func (a Answer) JSON() []byte {
 	bytes, _ := json.Marshal(a)
 	return bytes
 }
+
+// -----------------------------------------------------------------------------
+
+type AnswerDataMessage struct {
+	Message string `json:"message"`
+	Topic   string `json:"topic"`
+}
+
+func (a AnswerDataMessage) JSON() []byte {
+	bytes, _ := json.Marshal(a)
+	return bytes
+}
+
+// -----------------------------------------------------------------------------
 
 type AnswerDataTopics struct {
 	Topics []string `json:"topics"`

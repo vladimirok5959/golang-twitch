@@ -52,6 +52,7 @@ func go_reader(c *Connection) {
 									c.onInfo(fmt.Sprintf("type: %s, data: %#v", answer.Type, answer.Data))
 								}
 							} else {
+								(&answer).Parse()
 								c.onMessage(&answer)
 							}
 						}
