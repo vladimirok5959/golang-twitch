@@ -159,8 +159,11 @@ func (c *Connection) RemoveTopic(topic string) {
 
 // Topics returns all current listen topics.
 func (c *Connection) Topics() []string {
-	// TODO: ...
-	return []string{}
+	topics := []string{}
+	for topic := range c.topics {
+		topics = append(topics, topic)
+	}
+	return topics
 }
 
 // Close is close connection and shutdown all goroutines.
