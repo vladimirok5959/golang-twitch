@@ -131,11 +131,13 @@ func (c *Connection) listenTopis() {
 	}
 
 	// Send LISTEN request
-	msg := Answer{Type: Listen, Data: AnswerDataTopics{Topics: topics}}.JSON()
-	if err := c.Connection.WriteMessage(websocket.TextMessage, msg); err != nil {
-		c.onError(err)
-		c.active = false
-		c.onDisconnect()
+	if c.Connection != nil {
+		msg := Answer{Type: Listen, Data: AnswerDataTopics{Topics: topics}}.JSON()
+		if err := c.Connection.WriteMessage(websocket.TextMessage, msg); err != nil {
+			c.onError(err)
+			c.active = false
+			c.onDisconnect()
+		}
 	}
 }
 
@@ -169,11 +171,13 @@ func (c *Connection) RemoveTopic(topic string) {
 	delete(c.topics, topic)
 
 	// Send UNLISTEN request
-	msg := Answer{Type: Unlisten, Data: AnswerDataTopics{Topics: []string{topic}}}.JSON()
-	if err := c.Connection.WriteMessage(websocket.TextMessage, msg); err != nil {
-		c.onError(err)
-		c.active = false
-		c.onDisconnect()
+	if c.Connection != nil {
+		msg := Answer{Type: Unlisten, Data: AnswerDataTopics{Topics: []string{topic}}}.JSON()
+		if err := c.Connection.WriteMessage(websocket.TextMessage, msg); err != nil {
+			c.onError(err)
+			c.active = false
+			c.onDisconnect()
+		}
 	}
 
 	// No topics, close connection
@@ -201,6 +205,11 @@ func (c *Connection) Topics() []string {
 		topics = append(topics, topic)
 	}
 	return topics
+}
+
+// TopicsCount return count of topics.
+func (c *Connection) TopicsCount() int {
+	return len(c.topics)
 }
 
 // Close is close connection and shutdown all goroutines.
