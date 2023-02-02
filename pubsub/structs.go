@@ -55,6 +55,15 @@ func (a *Answer) Parse() {
 	a.Data = data
 }
 
+func (a *Answer) GetData() AnswerDataMessage {
+	switch v := a.Data.(type) {
+	case AnswerDataMessage:
+		return v
+	default:
+		return AnswerDataMessage{}
+	}
+}
+
 func (a Answer) HasError() bool {
 	return a.Error != ""
 }
