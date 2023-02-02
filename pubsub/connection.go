@@ -207,6 +207,14 @@ func (c *Connection) Topics() []string {
 	return topics
 }
 
+// HasTopic returns true if topic present.
+func (c *Connection) HasTopic(topic string) bool {
+	if _, ok := c.topics[topic]; ok {
+		return true
+	}
+	return false
+}
+
 // TopicsCount return count of topics.
 func (c *Connection) TopicsCount() int {
 	return len(c.topics)
