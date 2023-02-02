@@ -28,6 +28,8 @@ func go_reconnector(c *Connection) {
 						}
 					} else {
 						c.onInfo("reconnected successfully")
+						c.ping_start = time.Now()
+						c.ping_sended = false
 						c.Connection = conn
 						c.active = true
 						c.onConnect()
