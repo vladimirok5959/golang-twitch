@@ -46,6 +46,8 @@ func go_reader(c *Connection) {
 								if err := c.Connection.Close(); err != nil {
 									c.onError(err)
 								}
+							} else if resp.Type == "RESPONSE" {
+								// TODO: {"type":"RESPONSE","error":"","nonce":""}
 							} else {
 								c.onMessage(msg)
 							}
