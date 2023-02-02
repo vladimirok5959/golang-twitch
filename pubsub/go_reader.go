@@ -46,7 +46,11 @@ func go_reader(c *Connection) {
 									c.onError(err)
 								}
 							} else if answer.Type == Response {
-								// TODO: {"type":"RESPONSE","error":"","nonce":""}
+								if answer.HasError() {
+									c.onError(fmt.Errorf(answer.Error))
+								} else {
+									c.onInfo(fmt.Sprintf("type: %s, data: %#v", answer.Type, answer.Data))
+								}
 							} else {
 								c.onMessage(msg)
 							}

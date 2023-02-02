@@ -1,6 +1,8 @@
 package pubsub
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type AnswerType string
 
@@ -14,6 +16,10 @@ const (
 	Unlisten  AnswerType = "UNLISTEN"
 )
 
+func (a AnswerType) String() string {
+	return string(a)
+}
+
 type Answer struct {
 	Type  AnswerType  `json:"type"`
 	Data  interface{} `json:"data,omitempty"`
@@ -21,8 +27,12 @@ type Answer struct {
 	Nonce string      `json:"nonce,omitempty"`
 }
 
-func (r Answer) JSON() []byte {
-	bytes, _ := json.Marshal(r)
+func (a Answer) HasError() bool {
+	return a.Error != ""
+}
+
+func (a Answer) JSON() []byte {
+	bytes, _ := json.Marshal(a)
 	return bytes
 }
 
@@ -30,7 +40,7 @@ type AnswerDataTopics struct {
 	Topics []string `json:"topics"`
 }
 
-func (d AnswerDataTopics) JSON() []byte {
-	bytes, _ := json.Marshal(d)
+func (a AnswerDataTopics) JSON() []byte {
+	bytes, _ := json.Marshal(a)
 	return bytes
 }
