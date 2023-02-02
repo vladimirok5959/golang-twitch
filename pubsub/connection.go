@@ -36,7 +36,7 @@ type Connection struct {
 	eventOnDisconnect func(*Connection)
 	eventOnError      func(*Connection, error)
 	eventOnInfo       func(*Connection, string)
-	eventOnMessage    func(*Connection, []byte)
+	eventOnMessage    func(*Connection, *Answer)
 	eventOnPing       func(*Connection, time.Time)
 	eventOnPong       func(*Connection, time.Time, time.Time)
 }
@@ -92,7 +92,7 @@ func (c *Connection) onInfo(str string) {
 	}
 }
 
-func (c *Connection) onMessage(msg []byte) {
+func (c *Connection) onMessage(msg *Answer) {
 	if c.eventOnMessage != nil {
 		c.eventOnMessage(c, msg)
 	}
@@ -195,7 +195,7 @@ func (c *Connection) OnInfo(fn func(*Connection, string)) {
 	c.eventOnInfo = fn
 }
 
-func (c *Connection) OnMessage(fn func(*Connection, []byte)) {
+func (c *Connection) OnMessage(fn func(*Connection, *Answer)) {
 	c.eventOnMessage = fn
 }
 
