@@ -12,4 +12,7 @@ lint:
 tidy:
 	go mod tidy
 
-.PHONY: default clean test lint tidy
+build:
+	go build -o bin/cli cmd/cli/main.go
+
+.PHONY: default clean test lint tidy build
