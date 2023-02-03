@@ -1,6 +1,6 @@
 # golang-twitch
 
-Twitch API PubSub interface
+Twitch API PubSub interface and automatically take care of API limits. Also it will handle automatically reconnections, ping/pong and maintenance requests
 
 ```go
 ps := pubsub.New()
@@ -41,3 +41,4 @@ signal.Notify(interrupt, os.Interrupt)
 
 ps.Close()
 ```
+
