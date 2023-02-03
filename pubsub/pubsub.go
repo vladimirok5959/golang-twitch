@@ -175,6 +175,20 @@ func (p *PubSub) HasTopic(topic string, params ...interface{}) bool {
 	return false
 }
 
+// TopicsCount return count of topics.
+func (p *PubSub) TopicsCount() int {
+	p.Lock()
+	defer p.Unlock()
+
+	count := 0
+
+	for _, c := range p.Connections {
+		count += c.TopicsCount()
+	}
+
+	return count
+}
+
 // Topic generate correct topic for API.
 // Params can be as number or string.
 //

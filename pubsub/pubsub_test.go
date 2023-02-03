@@ -99,6 +99,21 @@ var _ = Describe("PubSub", func() {
 			})
 		})
 
+		Context("TopicsCount", func() {
+			It("return topics count", func() {
+				Expect(ps.TopicsCount()).To(Equal(0))
+				for i := 1; i <= 50; i++ {
+					ps.Listen("community-points-channel-v1", 1, i)
+				}
+				Expect(ps.TopicsCount()).To(Equal(50))
+
+				for i := 1; i <= 5; i++ {
+					ps.Listen("community-points-channel-v1", 2, i)
+				}
+				Expect(ps.TopicsCount()).To(Equal(55))
+			})
+		})
+
 		Context("Topic", func() {
 			It("generate correct topic", func() {
 				Expect(ps.Topic("channel-bits-events-v1.123")).To(Equal("channel-bits-events-v1.123"))
