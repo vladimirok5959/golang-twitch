@@ -4,6 +4,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -49,6 +50,8 @@ func main() {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 
+	ctx := context.Background()
+
 	go func(interrupt chan os.Signal) {
 		reader := bufio.NewReader(os.Stdin)
 		for {
@@ -63,7 +66,7 @@ func main() {
 					if len([]rune(cmd)) > 7 {
 						param := string([]rune(cmd)[7:len([]rune(cmd))])
 						fmt.Printf("Listen: (%s)\n", param)
-						ps.Listen(param)
+						ps.Listen(ctx, param)
 					} else {
 						fmt.Printf("Parameter is not set\n")
 					}
@@ -71,7 +74,7 @@ func main() {
 					if len([]rune(cmd)) > 9 {
 						param := string([]rune(cmd)[9:len([]rune(cmd))])
 						fmt.Printf("Unlisten: (%s)\n", param)
-						ps.Unlisten(param)
+						ps.Unlisten(ctx, param)
 					} else {
 						fmt.Printf("Parameter is not set\n")
 					}

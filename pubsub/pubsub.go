@@ -4,6 +4,7 @@
 package pubsub
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"strings"
@@ -76,7 +77,7 @@ func (p *PubSub) newConnection() *Connection {
 // New TCP connection will be created for every 50 topics.
 //
 // https://dev.twitch.tv/docs/pubsub/#connection-management
-func (p *PubSub) Listen(topic string, params ...interface{}) {
+func (p *PubSub) Listen(ctx context.Context, topic string, params ...interface{}) {
 	p.Lock()
 	defer p.Unlock()
 
@@ -91,6 +92,12 @@ func (p *PubSub) Listen(topic string, params ...interface{}) {
 	// Check topic in connection
 	// Don't continue if already present
 	for _, c := range p.Connections {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+		}
+
 		if c.HasTopic(t) {
 			return
 		}
@@ -98,6 +105,12 @@ func (p *PubSub) Listen(topic string, params ...interface{}) {
 
 	// Add topic to first not busy connection
 	for _, c := range p.Connections {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+		}
+
 		if c.TopicsCount() < TwitchApiMaxTopics {
 			c.AddTopic(t)
 			return
@@ -114,7 +127,7 @@ func (p *PubSub) Listen(topic string, params ...interface{}) {
 // Connection count will automatically decrease of needs.
 //
 // https://dev.twitch.tv/docs/pubsub/#connection-management
-func (p *PubSub) Unlisten(topic string, params ...interface{}) {
+func (p *PubSub) Unlisten(ctx context.Context, topic string, params ...interface{}) {
 	p.Lock()
 	defer p.Unlock()
 
@@ -122,6 +135,12 @@ func (p *PubSub) Unlisten(topic string, params ...interface{}) {
 
 	// Search and unlisten
 	for _, c := range p.Connections {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+		}
+
 		if c.HasTopic(t) {
 			c.RemoveTopic(t)
 
@@ -133,6 +152,12 @@ func (p *PubSub) Unlisten(topic string, params ...interface{}) {
 
 	// Remove empty connections
 	for i, c := range p.Connections {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+		}
+
 		if c.TopicsCount() <= 0 {
 			_ = c.Close()
 			delete(p.Connections, i)

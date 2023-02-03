@@ -33,7 +33,7 @@ ps.OnPong(func(c *pubsub.Connection, start, end time.Time) {
     log.Printf("OnPong (ID: %d), start: %d, end: %d\n", c.ID, start.Unix(), end.Unix())
 })
 
-ps.Listen("community-points-channel-v1", "<UserID>")
+ps.Listen(context.Background(), "community-points-channel-v1", "<UserID>")
 
 interrupt := make(chan os.Signal, 1)
 signal.Notify(interrupt, os.Interrupt)

@@ -1,6 +1,7 @@
 package pubsub_test
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"testing"
@@ -12,6 +13,8 @@ import (
 )
 
 var _ = Describe("PubSub", func() {
+	var ctx = context.Background()
+
 	Context("PubSub", func() {
 		var ps *pubsub.PubSub
 
@@ -28,22 +31,22 @@ var _ = Describe("PubSub", func() {
 				Expect(len(ps.Connections)).To(Equal(0))
 
 				for i := 1; i <= 45; i++ {
-					ps.Listen("community-points-channel-v1", 1, i)
+					ps.Listen(ctx, "community-points-channel-v1", 1, i)
 				}
 				Expect(len(ps.Connections)).To(Equal(1))
 
 				for i := 1; i <= 5; i++ {
-					ps.Listen("community-points-channel-v1", 1, i)
+					ps.Listen(ctx, "community-points-channel-v1", 1, i)
 				}
 				Expect(len(ps.Connections)).To(Equal(1))
 
 				for i := 1; i <= 50; i++ {
-					ps.Listen("community-points-channel-v1", 2, i)
+					ps.Listen(ctx, "community-points-channel-v1", 2, i)
 				}
 				Expect(len(ps.Connections)).To(Equal(2))
 
 				for i := 1; i <= 50; i++ {
-					ps.Listen("community-points-channel-v1", 3, i)
+					ps.Listen(ctx, "community-points-channel-v1", 3, i)
 				}
 				Expect(len(ps.Connections)).To(Equal(3))
 			})
@@ -54,18 +57,18 @@ var _ = Describe("PubSub", func() {
 				Expect(len(ps.Connections)).To(Equal(0))
 
 				for i := 1; i <= 50; i++ {
-					ps.Listen("community-points-channel-v1", 1, i)
+					ps.Listen(ctx, "community-points-channel-v1", 1, i)
 				}
 				Expect(len(ps.Connections)).To(Equal(1))
 
-				ps.Listen("community-points-channel-v1", 2, 1)
+				ps.Listen(ctx, "community-points-channel-v1", 2, 1)
 				Expect(len(ps.Connections)).To(Equal(2))
 
-				ps.Unlisten("community-points-channel-v1", 2, 1)
+				ps.Unlisten(ctx, "community-points-channel-v1", 2, 1)
 				Expect(len(ps.Connections)).To(Equal(1))
 
 				for i := 1; i <= 50; i++ {
-					ps.Unlisten("community-points-channel-v1", 1, i)
+					ps.Unlisten(ctx, "community-points-channel-v1", 1, i)
 				}
 				Expect(len(ps.Connections)).To(Equal(0))
 			})
@@ -76,11 +79,11 @@ var _ = Describe("PubSub", func() {
 				Expect(len(ps.Connections)).To(Equal(0))
 
 				for i := 1; i <= 50; i++ {
-					ps.Listen("community-points-channel-v1", 1, i)
+					ps.Listen(ctx, "community-points-channel-v1", 1, i)
 				}
 				Expect(len(ps.Connections)).To(Equal(1))
 
-				ps.Listen("community-points-channel-v1", 2, 1)
+				ps.Listen(ctx, "community-points-channel-v1", 2, 1)
 				Expect(len(ps.Connections)).To(Equal(2))
 
 				Expect(ps.Topics()).To(ContainElements(
@@ -93,7 +96,7 @@ var _ = Describe("PubSub", func() {
 			It("checks topics", func() {
 				Expect(len(ps.Connections)).To(Equal(0))
 
-				ps.Listen("community-points-channel-v1", 1)
+				ps.Listen(ctx, "community-points-channel-v1", 1)
 				Expect(ps.HasTopic("unknown")).To(BeFalse())
 				Expect(ps.HasTopic("community-points-channel-v1", 1)).To(BeTrue())
 			})
@@ -103,12 +106,12 @@ var _ = Describe("PubSub", func() {
 			It("return topics count", func() {
 				Expect(ps.TopicsCount()).To(Equal(0))
 				for i := 1; i <= 50; i++ {
-					ps.Listen("community-points-channel-v1", 1, i)
+					ps.Listen(ctx, "community-points-channel-v1", 1, i)
 				}
 				Expect(ps.TopicsCount()).To(Equal(50))
 
 				for i := 1; i <= 5; i++ {
-					ps.Listen("community-points-channel-v1", 2, i)
+					ps.Listen(ctx, "community-points-channel-v1", 2, i)
 				}
 				Expect(ps.TopicsCount()).To(Equal(55))
 			})
