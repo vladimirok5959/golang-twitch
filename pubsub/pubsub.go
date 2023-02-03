@@ -144,6 +144,22 @@ func (p *PubSub) Unlisten(topic string, params ...interface{}) {
 	}
 }
 
+// HasTopic returns true if topic present.
+func (p *PubSub) HasTopic(topic string, params ...interface{}) bool {
+	p.Lock()
+	defer p.Unlock()
+
+	t := p.Topic(topic, params...)
+
+	for _, c := range p.Connections {
+		if c.HasTopic(t) {
+			return true
+		}
+	}
+
+	return false
+}
+
 // Topic generate correct topic for API.
 // Params can be as number or string.
 //

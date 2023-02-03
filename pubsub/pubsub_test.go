@@ -71,6 +71,16 @@ var _ = Describe("PubSub", func() {
 			})
 		})
 
+		Context("HasTopic", func() {
+			It("checks topics", func() {
+				Expect(len(ps.Connections)).To(Equal(0))
+
+				ps.Listen("community-points-channel-v1", 1)
+				Expect(ps.HasTopic("unknown")).To(BeFalse())
+				Expect(ps.HasTopic("community-points-channel-v1", 1)).To(BeTrue())
+			})
+		})
+
 		Context("Topic", func() {
 			It("generate correct topic", func() {
 				Expect(ps.Topic("channel-bits-events-v1.123")).To(Equal("channel-bits-events-v1.123"))
