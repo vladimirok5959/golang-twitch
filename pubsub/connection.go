@@ -161,6 +161,7 @@ func (c *Connection) AddTopic(topic string) {
 
 	c.Lock()
 	defer c.Unlock()
+
 	c.topics[topic] = nil
 
 	c.listenTopis()
@@ -174,6 +175,7 @@ func (c *Connection) RemoveTopic(topic string) {
 
 	c.Lock()
 	defer c.Unlock()
+
 	delete(c.topics, topic)
 
 	// Send UNLISTEN request
@@ -199,6 +201,7 @@ func (c *Connection) RemoveTopic(topic string) {
 func (c *Connection) RemoveAllTopics() {
 	c.Lock()
 	defer c.Unlock()
+
 	c.topics = map[string]*struct{}{}
 
 	c.listenTopis()
@@ -206,10 +209,14 @@ func (c *Connection) RemoveAllTopics() {
 
 // Topics returns all current listen topics.
 func (c *Connection) Topics() []string {
+	c.Lock()
+	defer c.Unlock()
+
 	topics := []string{}
 	for topic := range c.topics {
 		topics = append(topics, topic)
 	}
+
 	return topics
 }
 
