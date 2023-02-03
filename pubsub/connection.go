@@ -132,6 +132,12 @@ func (c *Connection) listenTopis() {
 
 	// Send LISTEN request
 	if c.Connection != nil && c.active {
+		// TODO: track bad topics and auto remove? [FUTURE]
+		// One bad topic will break all next topics
+
+		// The error message associated with the request, or an empty string if there is no error.
+		// For Bits and whispers events requests, error responses can be:
+		// ERR_BADMESSAGE, ERR_BADAUTH, ERR_SERVER, ERR_BADTOPIC
 		msg := Answer{Type: Listen, Data: AnswerDataTopics{Topics: topics}}.JSON()
 		if err := c.Connection.WriteMessage(websocket.TextMessage, msg); err != nil {
 			c.onError(err)
