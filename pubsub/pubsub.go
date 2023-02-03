@@ -144,6 +144,21 @@ func (p *PubSub) Unlisten(topic string, params ...interface{}) {
 	}
 }
 
+// Topics returns all current listen topics.
+func (p *PubSub) Topics() []string {
+	p.Lock()
+	defer p.Unlock()
+
+	topics := []string{}
+	for _, c := range p.Connections {
+		for topic := range c.topics {
+			topics = append(topics, topic)
+		}
+	}
+
+	return topics
+}
+
 // HasTopic returns true if topic present.
 func (p *PubSub) HasTopic(topic string, params ...interface{}) bool {
 	p.Lock()

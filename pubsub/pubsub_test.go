@@ -71,6 +71,24 @@ var _ = Describe("PubSub", func() {
 			})
 		})
 
+		Context("Topics", func() {
+			It("return topics", func() {
+				Expect(len(ps.Connections)).To(Equal(0))
+
+				for i := 1; i <= 50; i++ {
+					ps.Listen("community-points-channel-v1", 1, i)
+				}
+				Expect(len(ps.Connections)).To(Equal(1))
+
+				ps.Listen("community-points-channel-v1", 2, 1)
+				Expect(len(ps.Connections)).To(Equal(2))
+
+				Expect(ps.Topics()).To(ContainElements(
+					"community-points-channel-v1.2.1",
+				))
+			})
+		})
+
 		Context("HasTopic", func() {
 			It("checks topics", func() {
 				Expect(len(ps.Connections)).To(Equal(0))
