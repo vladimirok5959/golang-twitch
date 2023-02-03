@@ -42,3 +42,4 @@ signal.Notify(interrupt, os.Interrupt)
 ps.Close()
 ```
 
+Full example here: [https://github.com/vladimirok5959/golang-twitch/blob/main/cmd/cli/main.go](https://github.com/vladimirok5959/golang-twitch/blob/main/cmd/cli/main.go)
