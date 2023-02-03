@@ -23,6 +23,54 @@ var _ = Describe("PubSub", func() {
 			ps.Close()
 		})
 
+		Context("Listen", func() {
+			It("create new connection for each 50 topics", func() {
+				Expect(len(ps.Connections)).To(Equal(0))
+
+				for i := 1; i <= 45; i++ {
+					ps.Listen("community-points-channel-v1", 1, i)
+				}
+				Expect(len(ps.Connections)).To(Equal(1))
+
+				for i := 1; i <= 5; i++ {
+					ps.Listen("community-points-channel-v1", 1, i)
+				}
+				Expect(len(ps.Connections)).To(Equal(1))
+
+				for i := 1; i <= 50; i++ {
+					ps.Listen("community-points-channel-v1", 2, i)
+				}
+				Expect(len(ps.Connections)).To(Equal(2))
+
+				for i := 1; i <= 50; i++ {
+					ps.Listen("community-points-channel-v1", 3, i)
+				}
+				Expect(len(ps.Connections)).To(Equal(3))
+			})
+		})
+
+		Context("Unlisten", func() {
+			It("remove connection without topics", func() {
+				Expect(len(ps.Connections)).To(Equal(0))
+
+				for i := 1; i <= 50; i++ {
+					ps.Listen("community-points-channel-v1", 1, i)
+				}
+				Expect(len(ps.Connections)).To(Equal(1))
+
+				ps.Listen("community-points-channel-v1", 2, 1)
+				Expect(len(ps.Connections)).To(Equal(2))
+
+				ps.Unlisten("community-points-channel-v1", 2, 1)
+				Expect(len(ps.Connections)).To(Equal(1))
+
+				for i := 1; i <= 50; i++ {
+					ps.Unlisten("community-points-channel-v1", 1, i)
+				}
+				Expect(len(ps.Connections)).To(Equal(0))
+			})
+		})
+
 		Context("Topic", func() {
 			It("generate correct topic", func() {
 				Expect(ps.Topic("channel-bits-events-v1.123")).To(Equal("channel-bits-events-v1.123"))
