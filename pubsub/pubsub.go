@@ -162,6 +162,7 @@ func (p *PubSub) Topic(topic string, params ...interface{}) string {
 }
 
 // Close is close all connections.
+// Usually need to call at the end of app life.
 func (p *PubSub) Close() {
 	p.Lock()
 	defer p.Unlock()
@@ -174,30 +175,44 @@ func (p *PubSub) Close() {
 
 // -----------------------------------------------------------------------------
 
+// OnConnect is bind func to event.
+// Will fire for every connection.
 func (c *PubSub) OnConnect(fn func(*Connection)) {
 	c.eventOnConnect = fn
 }
 
+// OnDisconnect is bind func to event.
+// Will fire for every connection.
 func (c *PubSub) OnDisconnect(fn func(*Connection)) {
 	c.eventOnDisconnect = fn
 }
 
+// OnError is bind func to event.
+// Will fire for every connection.
 func (c *PubSub) OnError(fn func(*Connection, error)) {
 	c.eventOnError = fn
 }
 
+// OnInfo is bind func to event.
+// Will fire for every connection.
 func (c *PubSub) OnInfo(fn func(*Connection, string)) {
 	c.eventOnInfo = fn
 }
 
+// OnMessage is bind func to event.
+// Will fire for every connection.
 func (c *PubSub) OnMessage(fn func(*Connection, *Answer)) {
 	c.eventOnMessage = fn
 }
 
+// OnPing is bind func to event.
+// Will fire for every connection.
 func (c *PubSub) OnPing(fn func(*Connection, time.Time)) {
 	c.eventOnPing = fn
 }
 
+// OnPong is bind func to event.
+// Will fire for every connection.
 func (c *PubSub) OnPong(fn func(*Connection, time.Time, time.Time)) {
 	c.eventOnPong = fn
 }
